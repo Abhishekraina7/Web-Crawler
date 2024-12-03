@@ -48,8 +48,58 @@ function getURLsfromHTML(htmlBody, baseURL) {
 
 }
 
+//Step: 1 figure out whether the current Url is on the same domain as the base url
 
-async function crawlPage(currentUrl) {
+function isURlOnSameDomain(baseURl, currentUrl) {
+
+    try {
+        const baseUrlObj = new URL(baseURl);
+        const currentUrlObj = new URL(currentUrl);
+        if (baseUrlObj.hostname === currentUrlObj.hostname) {
+            return true;
+        }
+    } catch (error) {
+        console.error(`Error checking domain: ${error}`);
+        return false;
+    }
+}
+
+
+//Step2: currentURl ka HTML content samate lo jaldi se
+
+async function fetchHTML(currentURL) {
+
+    console.log(`Crawling: ${currentURL}`);
+
+    try {
+
+        const response = await fetch(currentURL);
+
+        if (response.status >= 400) {
+            console.error(`Error: HTTP status code ${response.status}`);
+            return null;
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || contentType.includes('text/html')) {
+            console.error("Error hai bhai eder - HTML toh ayi he ni re");
+            return null;
+        }
+
+        return response.text(); // agr sabkucch khushal mangal raha toh apun ko html return mai mil jayegei
+
+    } catch (error) {
+        console.error(`Error Crawling: ${currentURL} bhai teri url k sath system hang hogya re yrr`);
+        return null;
+    }
+
+}
+
+
+
+// Main function hai J bhai - iske pass boht power hoti
+
+async function crawlPage(baseURL, currentUrl = baseURL, pages = {}) {
 
     console.log(`Crawling ${currentUrl}, it might take sometime`);
 
@@ -80,3 +130,6 @@ async function crawlPage(currentUrl) {
 
 
 }
+
+
+
