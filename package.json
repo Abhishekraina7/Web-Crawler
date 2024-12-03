@@ -17,7 +17,13 @@
   "author": "Abhishek Raina",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "babel-jest": "^29.7.0",
     "cross-env": "^7.0.3",
     "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "jsdom": "^25.0.1"
   }
 }
