@@ -45,3 +45,56 @@ devDependencies are packages that are only needed during development, testing, o
 - Webpack (a bundler)
   
 When you run npm install or yarn install, these devDependencies are also installed in the node_modules directory. However, when you run npm install --production or yarn install --production, devDependencies are not installed.
+
+
+
+
+
+
+# What is learned while coding report.js file
+
+```
+const outputPath = path.join(process.cwd(), 'report.csv');
+
+```
+## **process.cwd()**
+
+- **What it is:** process is a global object in Node.js that provides information about the current Node.js process. 
+- **The cwd()** method stands for "**current working directory.**"
+
+- **Functionality:** **process.cwd()** returns the absolute path of the directory from which the Node.js process was started. This is typically the root directory of your project or the directory where you executed the Node.js script.
+
+- **Example:** If you run your script from /home/user/myproject, process.cwd() would return /home/user/myproject.
+
+##  path.join()
+
+- **What it is:** path is a built-in module in Node.js that *provides utilities for working with file and directory paths.* The **join() method is used to concatenate path segments into a single path.**
+
+- **Functionality:** path.join() takes multiple string arguments and j*oins them together using the appropriate path separator for the operating system* (**e.g., / for Unix/Linux and \ for Windows**). This ensures that the resulting path is valid regardless of the operating system.
+  
+- **Example:** If you call **path.join('/home/user', 'myproject', 'file.txt'),** it would return **/home/user/myproject/file.txt** on ***Unix/Linux *** or **\home\user\myproject\file.txt** on ***Windows.***
+
+
+# fs.writeFile 
+```
+fs.writeFile(outputPath, csvContent, (err) => {
+    if (err) {
+        console.error('Error writing to CSV file:', err);
+    } else {
+        console.log(`Report saved as ${outputPath}`);
+    }
+});
+
+```
+
+ ###  1. **fs.writeFile()**
+
+- **What it is:** fs is the built-in Node.js module for interacting with the file system. The writeFile() method is used to asynchronously write data to a file.
+  
+- **Functionality:** **The writeFile() method takes three arguments**:
+  
+**a. File Path:** The first argument is the path to the file where you want to write the data. In this case, it's outputPath, which contains the full path to report.csv.
+
+**b. Data:** The second argument is the data you want to write to the file. Here, it's csvContent, which contains the CSV-formatted string that you want to save.
+
+**c. Callback Function:** The third argument is a callback function that gets executed once the write operation is complete. This function receives an error object as its argument if an error occurs during the write operation.
