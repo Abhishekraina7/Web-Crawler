@@ -2,6 +2,7 @@ export { normalizeURL }; // export makes the normalizedURL function available to
 export { getURLsfromHTML };
 export { crawlPage };
 import { JSDOM } from 'jsdom';
+import { reportpages } from './report.js';
 let currentUrl = '';
 
 function normalizeURL(url) {
@@ -81,12 +82,12 @@ async function fetchHTML(currentURL) {
         }
 
         const contentType = response.headers.get('content-type');
-        if (!contentType || contentType.includes('text/html')) {
+        if (!contentType || !contentType.includes('text/html')) {
             console.error("Error hai bhai eder - HTML toh ayi he ni re");
             return null;
         }
 
-        return response.text(); // agr sabkucch khushal mangal raha toh apun ko html return mai mil jayegei
+        return await response.text(); // agr sabkucch khushal mangal raha toh apun ko html return mai mil jayegei
 
     } catch (error) {
         console.error(`Error Crawling: ${currentURL} bhai teri url k sath system hang hogya re yrr`);
@@ -101,32 +102,41 @@ async function fetchHTML(currentURL) {
 
 async function crawlPage(baseURL, currentUrl = baseURL, pages = {}) {
 
-    console.log(`Crawling ${currentUrl}, it might take sometime`);
-
-    TODO: 'Add terminal spinner which makes the crawling alot better';
-    try {
-        //fetch the webpage
-        const response = await fetch(currentUrl,);
-        if (response.status >= 400) {
-            console.error(`HTTP status code is ${response.status}`);
-            return;
-        }
-
-        //check whether content is text/html or not
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('text/html')) {
-            console.error(`Error: Invalid content type. Expected text/html but got ${contentType}`);
-            return;
-        }
-
-        const htmBody = await response.text();
-        console.log(htmBody);
-
-        return htmBody;
-
-    } catch (error) {
-        console.error(`Some problem occured crawling ${currentUrl}, Error: ${error}`);
+    //1. check  if URL is on the same Domain
+    if (!isURlOnSameDomain(baseURL, currentUrl)) {
+        return pages;
     }
+
+    //2. Normalize the current URL
+
+    const normalizedURL = normalizeURL(currentUrl);
+
+    //3. Check if URL has already been crawled
+    if (pages[normalizedURL]) {
+        pages[normalizedURL]++;
+        return pages;
+    }
+
+    //4. Add new URL to pages object 
+    pages[normalizedURL] = 1;
+
+    //5. Fetch HTML content
+    const html = await fetchHTML(currentUrl);
+    if (!html) {
+        return pages;
+    }
+
+    //6. Get all urls from the HTML
+
+    const urls = getURLsfromHTML(html, baseURL);
+
+    //7. Recursively crawl each URL
+    for (const url of urls) {
+        pages = await crawlPage(baseURL, url, pages);
+    }
+
+    //8. Return updated pages object
+    return pages;
 
 
 }
