@@ -2,7 +2,6 @@ export { normalizeURL }; // export makes the normalizedURL function available to
 export { getURLsfromHTML };
 export { crawlPage };
 import { JSDOM } from 'jsdom';
-import { reportpages } from './report.js';
 let currentUrl = '';
 
 function normalizeURL(url) {

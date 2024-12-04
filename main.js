@@ -34,9 +34,7 @@ async function main() {
         new URL(baseURl);
         console.log(`Starting crawler at: ${baseURl}`);
         const pages = await crawlPage(baseURl);
-        reportpages(pages);
-
-
+        reportpages(pages); // this saves the report as csv @report.csv in the same directory as this project
 
     } catch (error) {
         console.log('Error: Invalid URL format');
